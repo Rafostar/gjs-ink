@@ -32,10 +32,14 @@ var TextColor = {
     LIGHT_BLUE: 94,
     LIGHT_MAGENTA: 95,
     LIGHT_CYAN: 96,
-    BROWN: '38;5;94',
+    BROWN: '38;5;52',
     LIGHT_BROWN: '38;5;130',
     PINK: '38;5;205',
     LIGHT_PINK: '38;5;211',
+    ORANGE: '38;5;208',
+    LIGHT_ORANGE: '38;5;214',
+    SALMON: '38;5;209',
+    LIGHT_SALMON: '38;5;216',
 };
 
 var Printer = class
