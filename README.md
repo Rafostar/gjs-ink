@@ -7,7 +7,7 @@
 Terminal text color printing and styling for GJS.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/other/images/promo.png">
+<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/promo.png">
 </p>
 
 ## Installation
@@ -21,7 +21,7 @@ Alternatively download it to `ink` folder in any other location and export that 
 Instructions how to use with full list of available options and functions can be found in [wiki](https://github.com/Rafostar/gjs-ink/wiki).
 
 ## Examples
-#### [basic.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/other/examples/basic.js)
+#### [basic.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/basic.js)
 ```javascript
 const { Ink } = imports.ink;
 
@@ -29,7 +29,7 @@ let printer = new Ink.Printer();
 printer.print('Hello World');
 ```
 
-#### [advanced.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/other/examples/advanced.js)
+#### [advanced.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/advanced.js)
 ```javascript
 const { Ink } = imports.ink;
 
@@ -82,7 +82,7 @@ print(
 );
 ```
 
-#### [test.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/other/examples/test.js)
+#### [test.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/test.js)
 ```javascript
 const { Ink } = imports.ink;
 

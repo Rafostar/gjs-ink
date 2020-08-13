@@ -2,5 +2,10 @@
   "name": "ink",
   "files": [
     "Ink.js"
-  ]
+  ],
+  "examples": {
+    "basic": "examples/basic.js",
+    "advanced": "examples/advanced.js",
+    "test": "examples/test.js"
+  }
 }
