@@ -16,7 +16,7 @@ var TextFont = {
 
 var TextColor = {
     VARIOUS: null,
-    WHITE: 97,
+    DEFAULT: 39,
     BLACK: 30,
     RED: 31,
     GREEN: 32,
@@ -32,6 +32,7 @@ var TextColor = {
     LIGHT_BLUE: 94,
     LIGHT_MAGENTA: 95,
     LIGHT_CYAN: 96,
+    WHITE: 97,
     BROWN: '38;5;52',
     LIGHT_BROWN: '38;5;130',
     PINK: '38;5;205',
@@ -41,6 +42,21 @@ var TextColor = {
     SALMON: '38;5;209',
     LIGHT_SALMON: '38;5;216',
 };
+
+/* BackgroundColor = TextColor + 10 */
+var BackgroundColor = {};
+for(let color in TextColor) {
+    let value = TextColor[color];
+    if(typeof value === 'string') {
+        value = value.split(';');
+        value[0] = Number(value[0]) + 10;
+    }
+    BackgroundColor[color] = (value > 0)
+        ? value + 10
+        : (Array.isArray(value))
+        ? value.join(';')
+        : value;
+}
 
 var Printer = class
 {
@@ -53,6 +69,9 @@ var Printer = class
 
         this.color = (typeof opts.color != 'undefined')
             ? opts.color : TextColor.VARIOUS;
+
+        this.background = (typeof opts.background != 'undefined')
+            ? opts.background : BackgroundColor.DEFAULT;
     }
 
     print()
@@ -111,6 +130,10 @@ var Printer = class
         str += (this.color != TextColor.VARIOUS && typeof this.color != 'undefined')
             ? this.color
             : this._getValueFromText(text, TextColor);
+        str += ';';
+        str += (this.background != BackgroundColor.VARIOUS && typeof this.background != 'undefined')
+            ? this.background
+            : this._getValueFromText(text, BackgroundColor);
         str += 'm';
 
         return (str + text + TERM_ESC + TERM_RESET);
