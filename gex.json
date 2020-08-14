@@ -6,6 +6,7 @@
   "examples": {
     "basic": "examples/basic.js",
     "advanced": "examples/advanced.js",
-    "test": "examples/test.js"
+    "test": "examples/test.js",
+    "truecolor": "examples/truecolor.js"
   }
 }
