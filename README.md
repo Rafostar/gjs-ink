@@ -44,7 +44,7 @@ let green = new Ink.Printer({
 
 let blinkYellow = new Ink.Printer({
     font: Ink.Font.BLINK,
-    color: Ink.Color.YELLOW
+    color: Ink.colorFromHex('#ffff00')
 });
 
 let bgLightBlue = new Ink.Printer({

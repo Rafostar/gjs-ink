@@ -45,7 +45,7 @@ var Color = {
 
 function colorFrom256(number)
 {
-    return getCustomCode([38, 5, number || 0]);
+    return _getCustomCode([38, 5, number || 0]);
 }
 
 function colorFromRGB(R, G, B)
@@ -60,12 +60,56 @@ function colorFromRGB(R, G, B)
     G = G || 0;
     B = B || 0;
 
-    return getCustomCode([38, 2, R, G, B]);
+    return _getCustomCode([38, 2, R, G, B]);
 }
 
-function getCustomCode(arr)
+function colorFromHex(R, G, B)
+{
+    let str = (Array.isArray(R))
+        ? R.join('')
+        : (typeof G === 'undefined')
+        ? String(R)
+        : (typeof B !== 'undefined')
+        ? String(R) + String(G) + String(B)
+        : String(R) + String(G);
+
+    if(str.includes('#'))
+        str = str.split('#')[1];
+
+    let colorInt = parseInt(str, 16);
+    let u8array = new Uint8Array(3);
+
+    u8array[2] = colorInt;
+    u8array[1] = colorInt >> 8;
+    u8array[0] = colorInt >> 16;
+
+    return colorFromRGB(Array.from(u8array));
+}
+
+function colorFromText(text)
+{
+    let value = _stringToDec(text);
+
+    /* Returns color from 1 to 231 every 10 */
+    return colorFrom256((value % 24) * 10 + 1);
+}
+
+function _getCustomCode(arr)
 {
     return arr.join(';');
+}
+
+function _stringToDec(str)
+{
+    str = str || '';
+
+    let len = str.length;
+    let total = 0;
+
+    while(len--)
+        total += Number(str.charCodeAt(len).toString(10));
+
+    return total;
 }
 
 var Printer = class
@@ -115,7 +159,7 @@ var Printer = class
         this._background = (value > 0)
             ? value + 10
             : (Array.isArray(value))
-            ? getCustomCode(value)
+            ? _getCustomCode(value)
             : value;
     }
 
@@ -134,19 +178,13 @@ var Printer = class
         return str;
     }
 
-    _getValueFromText(text, obj)
+    _fontFromText(text)
     {
-        obj = obj || Color;
+        let arr = Object.keys(Font);
+        let value = _stringToDec(text);
 
-        let arr = Object.keys(obj);
-        let len = text.length;
-        let total = 0;
-
-        while(len--)
-            total += Number(text.charCodeAt(len).toString(10));
-
-        /* Return a value excluding first (null) */
-        return obj[arr[total % (arr.length - 1) + 1]];
+        /* Return a font excluding first (null) */
+        return obj[arr[value % (arr.length - 1) + 1]];
     }
 
     _getPaintedString(text)
@@ -157,10 +195,10 @@ var Printer = class
             str += (typeof this[option] === 'number' || typeof this[option] === 'string')
                 ? this[option]
                 : (Array.isArray(this[option]))
-                ? getCustomCode(this[option])
+                ? _getCustomCode(this[option])
                 : (option === 'font')
-                ? this._getValueFromText(text, Font)
-                : this._getValueFromText(text, Color);
+                ? this._fontFromText(text)
+                : colorFromText(text);
 
             str += (option === '_background') ? 'm' : ';';
         }
