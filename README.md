@@ -67,8 +67,8 @@ let various = new Ink.Printer({
 });
 
 various.print('various color');
-various.print('other various color');
-various.print('another various color');
+various.print('other color');
+various.print('yet another various color');
 various.print(['supports', 'printing', 'arrays', 'and' , 'multiple', 'arguments', '!']);
 
 various.font = [Ink.Font.UNDERLINE];
