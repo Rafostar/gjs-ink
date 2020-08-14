@@ -1,7 +1,7 @@
 const TERM_ESC = '\x1B[';
 const TERM_RESET = '0m';
 
-var TextFont = {
+var Font = {
     VARIOUS: null,
     REGULAR: 0,
     BOLD: 1,
@@ -14,7 +14,7 @@ var TextFont = {
     STRIKEOUT: 9,
 };
 
-var TextColor = {
+var Color = {
     VARIOUS: null,
     DEFAULT: 39,
     BLACK: 30,
@@ -43,29 +43,24 @@ var TextColor = {
     LIGHT_SALMON: colorFrom256(216),
 };
 
-/* BackgroundColor = TextColor + 10 */
-var BackgroundColor = {};
-for(let color in TextColor) {
-    let value = TextColor[color];
-    if(typeof value === 'string') {
-        value = value.split(';');
-        value[0] = Number(value[0]) + 10;
-    }
-    BackgroundColor[color] = (value > 0)
-        ? value + 10
-        : (Array.isArray(value))
-        ? getCustomCode(value)
-        : value;
-}
-
 function colorFrom256(number)
 {
-    return getCustomCode([38,5,number]);
+    return getCustomCode([38, 5, number || 0]);
 }
 
-function bgColorFrom256(number)
+function colorFromRGB(R, G, B)
 {
-    return getCustomCode([48,5,number]);
+    if(Array.isArray(R)) {
+        B = R[2];
+        G = R[1];
+        R = R[0];
+    }
+
+    R = R || 0;
+    G = G || 0;
+    B = B || 0;
+
+    return getCustomCode([38, 2, R, G, B]);
 }
 
 function getCustomCode(arr)
@@ -80,9 +75,9 @@ var Printer = class
         opts = opts || {};
 
         const defaults = {
-            font: TextFont.REGULAR,
-            color: TextColor.VARIOUS,
-            background: BackgroundColor.DEFAULT
+            font: Font.REGULAR,
+            color: Color.DEFAULT,
+            background: Color.DEFAULT
         };
 
         for(let def in defaults) {
@@ -106,6 +101,24 @@ var Printer = class
         return this._getPaintedArgs(arguments);
     }
 
+    get background()
+    {
+        return this._background;
+    }
+
+    set background(value)
+    {
+        if(typeof value === 'string') {
+            value = value.split(';');
+            value[0] = Number(value[0]) + 10;
+        }
+        this._background = (value > 0)
+            ? value + 10
+            : (Array.isArray(value))
+            ? getCustomCode(value)
+            : value;
+    }
+
     _getPaintedArgs(args)
     {
         let str = '';
@@ -123,7 +136,7 @@ var Printer = class
 
     _getValueFromText(text, obj)
     {
-        obj = obj || TextColor;
+        obj = obj || Color;
 
         let arr = Object.keys(obj);
         let len = text.length;
@@ -140,18 +153,16 @@ var Printer = class
     {
         let str = TERM_ESC;
 
-        for(let option of ['font', 'color', 'background']) {
+        for(let option of ['font', 'color', '_background']) {
             str += (typeof this[option] === 'number' || typeof this[option] === 'string')
                 ? this[option]
                 : (Array.isArray(this[option]))
                 ? getCustomCode(this[option])
                 : (option === 'font')
-                ? this._getValueFromText(text, TextFont)
-                : (option === 'color')
-                ? this._getValueFromText(text, TextColor)
-                : this._getValueFromText(text, BackgroundColor);
+                ? this._getValueFromText(text, Font)
+                : this._getValueFromText(text, Color);
 
-            str += (option === 'background') ? 'm' : ';';
+            str += (option === '_background') ? 'm' : ';';
         }
 
         return (str + text + TERM_ESC + TERM_RESET);
