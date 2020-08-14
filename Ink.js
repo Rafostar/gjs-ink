@@ -90,8 +90,8 @@ function colorFromText(text)
 {
     let value = _stringToDec(text);
 
-    /* Returns color from 1 to 231 every 10 */
-    return colorFrom256((value % 24) * 10 + 1);
+    /* Returns color from 1 to 221 every 10 */
+    return colorFrom256((value % 23) * 10 + 1);
 }
 
 function _getCustomCode(arr)
