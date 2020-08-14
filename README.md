@@ -10,6 +10,12 @@ Terminal text color printing and styling for GJS.
 <img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/promo.png">
 </p>
 
+Print text and images in terminal with `Ink` using up to 16 million colors palette!
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/truecolor.png">
+</p>
+
 ## Installation
 Just download this repository contents to `/usr/share/gjs-1.0/ink` folder.
 ```
