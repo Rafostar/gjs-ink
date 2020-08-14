@@ -33,14 +33,14 @@ var TextColor = {
     LIGHT_MAGENTA: 95,
     LIGHT_CYAN: 96,
     WHITE: 97,
-    BROWN: '38;5;52',
-    LIGHT_BROWN: '38;5;130',
-    PINK: '38;5;205',
-    LIGHT_PINK: '38;5;211',
-    ORANGE: '38;5;208',
-    LIGHT_ORANGE: '38;5;214',
-    SALMON: '38;5;209',
-    LIGHT_SALMON: '38;5;216',
+    BROWN: colorFrom256(52),
+    LIGHT_BROWN: colorFrom256(130),
+    PINK: colorFrom256(205),
+    LIGHT_PINK: colorFrom256(211),
+    ORANGE: colorFrom256(208),
+    LIGHT_ORANGE: colorFrom256(214),
+    SALMON: colorFrom256(209),
+    LIGHT_SALMON: colorFrom256(216),
 };
 
 /* BackgroundColor = TextColor + 10 */
@@ -54,8 +54,23 @@ for(let color in TextColor) {
     BackgroundColor[color] = (value > 0)
         ? value + 10
         : (Array.isArray(value))
-        ? value.join(';')
+        ? getCustomCode(value)
         : value;
+}
+
+function colorFrom256(number)
+{
+    return getCustomCode([38,5,number]);
+}
+
+function bgColorFrom256(number)
+{
+    return getCustomCode([48,5,number]);
+}
+
+function getCustomCode(arr)
+{
+    return arr.join(';');
 }
 
 var Printer = class
@@ -129,7 +144,7 @@ var Printer = class
             str += (typeof this[option] === 'number' || typeof this[option] === 'string')
                 ? this[option]
                 : (Array.isArray(this[option]))
-                ? this[option].join(';')
+                ? getCustomCode(this[option])
                 : (option === 'font')
                 ? this._getValueFromText(text, TextFont)
                 : (option === 'color')
