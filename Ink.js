@@ -1,4 +1,4 @@
-const TERM_ESC = '\x1b[';
+const TERM_ESC = '\x1B[';
 const TERM_RESET = '0m';
 
 var TextFont = {
@@ -64,14 +64,16 @@ var Printer = class
     {
         opts = opts || {};
 
-        this.font = (typeof opts.font != 'undefined')
-            ? opts.font : TextFont.REGULAR;
+        const defaults = {
+            font: TextFont.REGULAR,
+            color: TextColor.VARIOUS,
+            background: BackgroundColor.DEFAULT
+        };
 
-        this.color = (typeof opts.color != 'undefined')
-            ? opts.color : TextColor.VARIOUS;
-
-        this.background = (typeof opts.background != 'undefined')
-            ? opts.background : BackgroundColor.DEFAULT;
+        for(let def in defaults) {
+            this[def] = (typeof opts[def] !== 'undefined')
+                ? opts[def] : defaults[def];
+        }
     }
 
     print()
@@ -123,18 +125,19 @@ var Printer = class
     {
         let str = TERM_ESC;
 
-        str += (this.font != TextFont.VARIOUS && typeof this.font != 'undefined')
-            ? this.font
-            : this._getValueFromText(text, TextFont);
-        str += ';';
-        str += (this.color != TextColor.VARIOUS && typeof this.color != 'undefined')
-            ? this.color
-            : this._getValueFromText(text, TextColor);
-        str += ';';
-        str += (this.background != BackgroundColor.VARIOUS && typeof this.background != 'undefined')
-            ? this.background
-            : this._getValueFromText(text, BackgroundColor);
-        str += 'm';
+        for(let option of ['font', 'color', 'background']) {
+            str += (typeof this[option] === 'number' || typeof this[option] === 'string')
+                ? this[option]
+                : (Array.isArray(this[option]))
+                ? this[option].join(';')
+                : (option === 'font')
+                ? this._getValueFromText(text, TextFont)
+                : (option === 'color')
+                ? this._getValueFromText(text, TextColor)
+                : this._getValueFromText(text, BackgroundColor);
+
+            str += (option === 'background') ? 'm' : ';';
+        }
 
         return (str + text + TERM_ESC + TERM_RESET);
     }
