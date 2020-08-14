@@ -37,14 +37,19 @@ let green = new Ink.Printer({
     color: Ink.TextColor.GREEN
 });
 
-let bgLightBlue = new Ink.Printer({
-    font: Ink.TextFont.REVERSE,
-    color: Ink.TextColor.LIGHT_BLUE
-});
-
 let blinkYellow = new Ink.Printer({
     font: Ink.TextFont.BLINK,
     color: Ink.TextColor.YELLOW
+});
+
+let bgLightBlue = new Ink.Printer({
+    font: [
+        Ink.TextFont.BOLD,
+        Ink.TextFont.ITALIC,
+        Ink.TextFont.UNDERLINE
+    ],
+    color: Ink.TextColor.RED,
+    background: Ink.BackgroundColor.LIGHT_BLUE
 });
 
 green.print('green text in stdout');
@@ -61,8 +66,8 @@ various.print('another various color');
 
 various.print(['supports', 'printing', 'arrays', 'and' , 'multiple', 'arguments', '!']);
 
-various.font = Ink.TextFont.UNDERLINE;
-various.print('object', 'values', 'can', 'be', 'changed', 'at', 'runtime');
+various.font = [Ink.TextFont.UNDERLINE];
+various.print('printer', 'values', 'may', 'be', 'changed', 'at', 'runtime');
 
 let lightMagenta = new Ink.Printer({
     color: Ink.TextColor.LIGHT_MAGENTA
@@ -75,6 +80,8 @@ in multiple lines`
 );
 
 various.color = Ink.TextColor.LIGHT_BROWN;
+bgLightBlue.font.push(Ink.TextFont.REVERSE);
+
 print(
     green.getPainted('can also return'),
     various.getPainted('painted text'),
@@ -88,26 +95,22 @@ const { Ink } = imports.ink;
 
 let printer = new Ink.Printer();
 
-for(let font in Ink.TextFont) {
-    if(['VARIOUS', 'HIDDEN'].includes(font))
+for(let color in Ink.TextColor) {
+    if(color === 'VARIOUS')
         continue;
 
-    let str = '';
-    for(let color in Ink.TextColor) {
-        if(!color.startsWith('LIGHT'))
+    let str = `${color}: `;
+    while(str.length < 18)
+        str += ' ';
+
+    for(let font in Ink.TextFont) {
+        if(['VARIOUS', 'HIDDEN'].includes(font))
             continue;
 
         printer.font = Ink.TextFont[font];
         printer.color = Ink.TextColor[color];
 
-        let textLength = font.length;
-        let painted = printer.getPainted(font);
-
-        while(textLength < 11) {
-            painted += ' ';
-            textLength++;
-        }
-
+        let painted = printer.getPainted(font) + ' ';
         str += painted;
     }
     print(str);
