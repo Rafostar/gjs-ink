@@ -1,6 +1,8 @@
 const { GdkPixbuf } = imports.gi;
 const ByteArray = imports.byteArray;
 
+const noop = () => {};
+
 var Scanner = class
 {
     constructor(opts)
@@ -19,17 +21,52 @@ var Scanner = class
         }
     }
 
-    scan(filePath)
+    scan(source, isResource, cancellable)
     {
-        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-            filePath, this.size_x, this.size_y, this.keep_aspect
-        );
+        let type = (isResource && isResource === true)
+            ? 'resource'
+            : (typeof source === 'string')
+            ? 'file'
+            : 'stream';
 
-        return this.parsePixbuf(pixbuf);
+        return this._scanSync(source, type, cancellable);
+    }
+
+    scanStreamAsync(source, cancellable, cb)
+    {
+        cb = (typeof cancellable === 'function')
+            ? cancellable
+            : (cb)
+            ? cb
+            : noop;
+
+        cancellable = (!cancellable || typeof cancellable === 'function')
+            ? null : cancellable;
+
+        GdkPixbuf.Pixbuf.new_from_stream_at_scale_async(
+            source,
+            this.size_x,
+            this.size_y,
+            this.keep_aspect,
+            cancellable,
+            (stream, task) => this._onStreamLoaded(task, cb)
+        );
+    }
+
+    scanStreamPromise(stream, cancellable)
+    {
+        return new Promise((resolve, reject) => {
+            this.scanStreamAsync(stream, cancellable, (err, image) => {
+                (err) ? reject(err) : resolve(image);
+            });
+        });
     }
 
     parsePixbuf(pixbuf)
     {
+        if(!pixbuf)
+            return null;
+
         let pixels = pixbuf.get_pixels();
         let valuesPerPixel = pixbuf.get_n_channels();
         let rowstride = pixbuf.get_rowstride();
@@ -51,5 +88,43 @@ var Scanner = class
         }
 
         return pixelsArray;
+    }
+
+    _scanSync(source, type, cancellable)
+    {
+        let args = [
+            source,
+            this.size_x,
+            this.size_y,
+            this.keep_aspect
+        ];
+
+        if(type === 'stream') {
+            cancellable = cancellable || null;
+            args.push(cancellable);
+        }
+
+        let pixbuf = GdkPixbuf.Pixbuf[
+            `new_from_${type}_at_scale`].apply(this, args);
+
+        return this.parsePixbuf(pixbuf);
+    }
+
+    _onStreamLoaded(task, cb)
+    {
+        if(task.had_error())
+            return cb(new Error('stream task had an error'));
+
+        let pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(task);
+
+        if(!pixbuf)
+            return cb(new Error('could not create pixbuf from stream'));
+
+        let parsed = this.parsePixbuf(pixbuf);
+
+        if(!parsed)
+            return cb(new Error('could not parse pixbuf'));
+
+        cb(null, parsed);
     }
 }
