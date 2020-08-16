@@ -28,7 +28,11 @@ Alternatively download it to `ink` folder in any other location and export that 
 Instructions how to use with full list of available options and functions can be found in [wiki](https://github.com/Rafostar/gjs-ink/wiki).
 
 ## Examples
+### [Ink.Printer](https://github.com/Rafostar/gjs-ink/wiki/Ink-Classes#inkprinter)
 #### [basic.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/basic.js)
+```shell
+gjs ./examples/basic.js
+```
 ```javascript
 const { Ink } = imports.ink;
 
@@ -40,8 +44,10 @@ let printer = new Ink.Printer({
 
 printer.print('Hello World');
 ```
-
 #### [advanced.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/advanced.js)
+```shell
+gjs ./examples/advanced.js
+```
 ```javascript
 const { Ink } = imports.ink;
 
@@ -100,54 +106,21 @@ print(
     bgLightBlue.getPainted('for use with standard "print()"')
 );
 ```
-
-#### [test.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/test.js)
+### [Photo.Scanner](https://github.com/Rafostar/gjs-ink/wiki/Photo-Classes#photoscanner)
+```shell
+gjs ./examples/mario.js
+```
 ```javascript
-const { Ink } = imports.ink;
+const { Ink, Photo } = imports.ink;
+
+let scanner = new Photo.Scanner({ size_y: 16 });
+let image = scanner.scan('./examples/mario.png');
 
 let printer = new Ink.Printer();
-
-for(let color in Ink.Color) {
-    if(color === 'VARIOUS')
-        continue;
-
-    let str = `${color}: `;
-    while(str.length < 18)
-        str += ' ';
-
-    for(let font in Ink.Font) {
-        if(['VARIOUS', 'HIDDEN'].includes(font))
-            continue;
-
-        printer.font = Ink.Font[font];
-        printer.color = Ink.Color[color];
-
-        let painted = printer.getPainted(font) + ' ';
-        str += painted;
-    }
-    print(str);
-}
+printer.print(image);
 ```
 
-#### [truecolor.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/truecolor.js)
-```javascript
-let { Ink } = imports.ink;
-
-let printer = new Ink.Printer();
-
-for(let i = 0; i <= 2; i++) {
-    let str = '';
-    let array = [0, 0, 0];
-    array[i] = 255;
-
-    while(array[i] >= 0) {
-        printer.background = Ink.colorFromRGB(array);
-        str += printer.getPainted(' ');
-        array[i] -= 4;
-    }
-    print(str);
-}
-```
+More examples can be found inside [examples folder](https://github.com/Rafostar/gjs-ink/tree/master/examples) in this repository.
 
 ## Donation
 If you like my work please support it by buying me a cup of coffee :-)
