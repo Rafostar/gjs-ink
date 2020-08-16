@@ -39,3 +39,11 @@ gjs ./examples/mario.js
 <p align="center">
 <img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/mario.png">
 </p>
+
+### [sonic_http.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/sonic_http.js)
+```shell
+gjs ./examples/sonic_http.js
+```
+<p align="center">
+<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/sonic_http.png">
+</p>
