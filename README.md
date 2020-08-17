@@ -28,6 +28,8 @@ Alternatively download it to `ink` folder in any other location and export that 
 Instructions how to use with full list of available options and functions can be found in [wiki](https://github.com/Rafostar/gjs-ink/wiki).
 
 ## Examples
+Here are some usage examples for each included module. More can be found inside [examples folder](https://github.com/Rafostar/gjs-ink/tree/master/examples) in this repository.
+
 ### [Ink.Printer](https://github.com/Rafostar/gjs-ink/wiki/Ink-Classes#inkprinter)
 #### [basic.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/basic.js)
 ```shell
@@ -44,6 +46,7 @@ let printer = new Ink.Printer({
 
 printer.print('Hello World');
 ```
+
 #### [advanced.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/advanced.js)
 ```shell
 gjs ./examples/advanced.js
@@ -106,6 +109,7 @@ print(
     bgLightBlue.getPainted('for use with standard "print()"')
 );
 ```
+
 ### [Photo.Scanner](https://github.com/Rafostar/gjs-ink/wiki/Photo-Classes#photoscanner)
 ```shell
 gjs ./examples/mario.js
@@ -119,8 +123,6 @@ let image = scanner.scan('./examples/mario.png');
 let printer = new Ink.Printer();
 printer.print(image);
 ```
-
-More examples can be found inside [examples folder](https://github.com/Rafostar/gjs-ink/tree/master/examples) in this repository.
 
 ## Donation
 If you like my work please support it by buying me a cup of coffee :-)
