@@ -47,26 +47,26 @@ var Color = {
 
 function colorFrom256(number)
 {
-    return _getCustomCode([38, 5, number || 0]);
+    return `38;5;${number || 0}`;
 }
 
 function colorFromRGB(R, G, B, A)
 {
-    if(Array.isArray(R)) {
+    if(typeof G === 'undefined' && Array.isArray(R)) {
         A = (R.length > 3) ? R[3] : 255;
         B = (R.length > 2) ? R[2] : 0;
         G = (R.length > 1) ? R[1] : 0;
         R = (R.length > 0) ? R[0] : 0;
     }
 
-    if(typeof A !== 'undefined' && A <= maxTransparency)
+    if(_getIsTransparent(A))
         return Color.DEFAULT;
 
     R = R || 0;
     G = G || 0;
     B = B || 0;
 
-    return _getCustomCode([38, 2, R, G, B]);
+    return `38;2;${R};${G};${B}`;
 }
 
 function colorFromHex(R, G, B, A)
@@ -76,7 +76,7 @@ function colorFromHex(R, G, B, A)
         R = R.join('');
     }
 
-    if(typeof A !== 'undefined' && A <= maxTransparency)
+    if(_getIsTransparent(A))
         return Color.DEFAULT;
 
     let str = (typeof G === 'undefined')
@@ -106,9 +106,9 @@ function colorFromText(text)
     return colorFrom256((value % 23) * 10 + 1);
 }
 
-function _getCustomCode(arr)
+function _getIsTransparent(A)
 {
-    return arr.join(';');
+    return (typeof A !== 'undefined' && A <= maxTransparency);
 }
 
 function _stringToDec(str)
@@ -173,17 +173,12 @@ var Printer = class
         let valueType = (typeof value);
 
         if(valueType === 'string') {
-            if(value.includes(';')) {
-                value = value.split(';');
-                value[0] = 48;
-            }
-            else
-                value = Number(value);
+            value = (value[2] === ';')
+                ? '4' + value.substring(1)
+                : Number(value);
         }
         this._background = (valueType === 'object')
             ? null
-            : (Array.isArray(value))
-            ? _getCustomCode(value)
             : (value < 40 || value >= 90 && value < 100)
             ? value + 10
             : value;
@@ -213,7 +208,7 @@ var Printer = class
         return obj[arr[value % (arr.length - 1) + 1]];
     }
 
-    _getPaintedString(text)
+    _getPaintedString(text, noReset)
     {
         let str = TERM_ESC;
 
@@ -221,16 +216,17 @@ var Printer = class
             let optionType = (typeof this[option]);
             str += (optionType === 'number' || optionType === 'string')
                 ? this[option]
-                : (Array.isArray(this[option]))
-                ? _getCustomCode(this[option])
                 : (option === 'font')
                 ? this._fontFromText(text)
                 : colorFromText(text);
 
-            str += (option === '_background') ? 'm' : ';';
+            str += (option !== '_background') ? ';' : 'm';
         }
+        str += text;
 
-        return (str + text + TERM_ESC + TERM_RESET);
+        return (noReset)
+            ? str
+            : (str + TERM_ESC + TERM_RESET);
     }
 
     _getIsImage(args)
@@ -239,9 +235,9 @@ var Printer = class
             return false;
 
         let arg = args[0];
-        let argType = (typeof args[0]);
+        let argType = (typeof arg);
 
-        if(argType === 'number' || argType === 'string')
+        if(argType === 'string' || argType === 'number')
             return false;
 
         if(!Array.isArray(arg))
@@ -265,12 +261,30 @@ var Printer = class
 
         for(let row of pixelsArr) {
             let paintedLine = '';
+            let block = '  ';
 
-            for(let pixel of row) {
-                this.color = colorFromRGB(pixel);
-                this.background = this.color;
-                paintedLine += this.getPainted('  ');
+            for(let i = 0; i < row.length; i++) {
+                let pixel = row[i];
+                let nextPixel = (i < row.length - 1) ? row[i + 1] : null;
+
+                if(nextPixel && pixel.every((value, index) =>
+                    value === nextPixel[index]
+                )) {
+                    block += '  ';
+                    continue;
+                }
+                /* Do not use predefined functions here (it would impact performance) */
+                let isTransparent = (pixel.length >= 3) ? _getIsTransparent(pixel[3]) : false;
+                this.color = (isTransparent)
+                    ? Color.DEFAULT
+                    : `38;2;${pixel[0]};${pixel[1]};${pixel[2]}`;
+                this._background = (isTransparent)
+                    ? Color.DEFAULT
+                    : `48;2;${pixel[0]};${pixel[1]};${pixel[2]}`;
+                paintedLine += `${TERM_ESC}0;${this.color};${this._background}m${block}`;
+                block = '  ';
             }
+            paintedLine += TERM_ESC + TERM_RESET;
 
             switch(output) {
                 case 'stderr':
