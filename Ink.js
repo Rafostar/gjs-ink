@@ -108,6 +108,39 @@ function colorFromText(text)
     return colorFrom256((value % 23) * 10 + 1);
 }
 
+function fontFromText(text)
+{
+    let arr = Object.keys(Font);
+    let value = _stringToDec(text);
+
+    /* Return a font excluding first (null) */
+    return Font[arr[value % (arr.length - 1) + 1]];
+}
+
+function _getIsImage(args)
+{
+    if(args.length !== 1)
+        return false;
+
+    let arg = args[0];
+    let argType = (typeof arg);
+
+    if(argType === 'string' || argType === 'number')
+        return false;
+
+    if(!Array.isArray(arg))
+        return false;
+
+    let depth = 2;
+    while(depth--) {
+        arg = arg[0];
+        if(!Array.isArray(arg))
+            return false;
+    }
+
+    return arg.some(val => val !== 'number');
+}
+
 function _getIsTransparent(A)
 {
     return (typeof A !== 'undefined' && A <= maxTransparency);
@@ -146,21 +179,21 @@ var Printer = class
 
     print()
     {
-        (this._getIsImage(arguments))
+        (_getIsImage(arguments))
             ? this._printImage(arguments[0], 'stdout')
             : print(this._getPaintedArgs(arguments));
     }
 
     printerr()
     {
-        (this._getIsImage(arguments))
+        (_getIsImage(arguments))
             ? this._printImage(arguments[0], 'stderr')
             : printerr(this._getPaintedArgs(arguments));
     }
 
     getPainted()
     {
-        return (this._getIsImage(arguments))
+        return (_getIsImage(arguments))
             ? this._printImage(arguments[0], 'return')
             : this._getPaintedArgs(arguments);
     }
@@ -201,15 +234,6 @@ var Printer = class
         return str;
     }
 
-    _fontFromText(text)
-    {
-        let arr = Object.keys(Font);
-        let value = _stringToDec(text);
-
-        /* Return a font excluding first (null) */
-        return obj[arr[value % (arr.length - 1) + 1]];
-    }
-
     _getPaintedString(text, noReset)
     {
         let str = TERM_ESC;
@@ -218,8 +242,10 @@ var Printer = class
             let optionType = (typeof this[option]);
             str += (optionType === 'number' || optionType === 'string')
                 ? this[option]
+                : (option === 'font' && Array.isArray(this[option]))
+                ? this[option].join(';')
                 : (option === 'font')
-                ? this._fontFromText(text)
+                ? fontFromText(text)
                 : colorFromText(text);
 
             str += (option !== '_background') ? ';' : 'm';
@@ -229,30 +255,6 @@ var Printer = class
         return (noReset)
             ? str
             : (str + TERM_ESC + TERM_RESET);
-    }
-
-    _getIsImage(args)
-    {
-        if(args.length !== 1)
-            return false;
-
-        let arg = args[0];
-        let argType = (typeof arg);
-
-        if(argType === 'string' || argType === 'number')
-            return false;
-
-        if(!Array.isArray(arg))
-            return false;
-
-        let depth = 2;
-        while(depth--) {
-            arg = arg[0];
-            if(!Array.isArray(arg))
-                return false;
-        }
-
-        return arg.some(val => val !== 'number');
     }
 
     _printImage(pixelsArr, output)
