@@ -85,6 +85,9 @@ function colorFromHex(R, G, B, A)
     let offset = (str[0] === '#') ? 1 : 0;
     let alphaIndex = 6 + offset;
 
+    while(str.length < alphaIndex)
+        str += '0';
+
     A = (str.length > alphaIndex)
         ? parseInt(str.substring(alphaIndex, alphaIndex + 2), 16)
         : 255;
