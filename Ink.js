@@ -71,31 +71,33 @@ function colorFromRGB(R, G, B, A)
 
 function colorFromHex(R, G, B, A)
 {
-    if((Array.isArray(R))) {
-        A = (R.length > 3) ? R[3] : 255;
+    if((Array.isArray(R)))
         R = R.join('');
-    }
-
-    if(_getIsTransparent(A))
-        return Color.DEFAULT;
 
     let str = (typeof G === 'undefined')
         ? String(R)
+        : (typeof A !== 'undefined')
+        ? String(R) + String(G) + String(B) + String(A)
         : (typeof B !== 'undefined')
         ? String(R) + String(G) + String(B)
         : String(R) + String(G);
 
-    if(str.includes('#'))
-        str = str.split('#')[1];
+    let offset = (str[0] === '#') ? 1 : 0;
+    let alphaIndex = 6 + offset;
+
+    A = (str.length > alphaIndex)
+        ? parseInt(str.substring(alphaIndex, alphaIndex + 2), 16)
+        : 255;
+    str = str.substring(offset, alphaIndex);
 
     let colorInt = parseInt(str, 16);
-    let u8array = new Uint8Array(3);
+    let u8arr = new Uint8Array(3);
 
-    u8array[2] = colorInt;
-    u8array[1] = colorInt >> 8;
-    u8array[0] = colorInt >> 16;
+    u8arr[2] = colorInt;
+    u8arr[1] = colorInt >> 8;
+    u8arr[0] = colorInt >> 16;
 
-    return colorFromRGB(Array.from(u8array));
+    return colorFromRGB(u8arr[0], u8arr[1], u8arr[2], A);
 }
 
 function colorFromText(text)
