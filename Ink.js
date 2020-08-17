@@ -47,12 +47,20 @@ var Color = {
 
 function colorFrom256(number)
 {
+    if(typeof number === 'undefined')
+        number = Math.floor(Math.random() * 256) + 1;
+
     return `38;5;${number || 0}`;
 }
 
 function colorFromRGB(R, G, B, A)
 {
-    if(typeof G === 'undefined' && Array.isArray(R)) {
+    if(typeof R === 'undefined') {
+        R = Math.floor(Math.random() * 256);
+        G = Math.floor(Math.random() * 256);
+        B = Math.floor(Math.random() * 256);
+    }
+    else if(typeof G === 'undefined' && Array.isArray(R)) {
         A = (R.length > 3) ? R[3] : 255;
         B = (R.length > 2) ? R[2] : 0;
         G = (R.length > 1) ? R[1] : 0;
