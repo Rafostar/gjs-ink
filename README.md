@@ -1,37 +1,37 @@
-# gjs-ink
-[![License](https://img.shields.io/github/license/Rafostar/gjs-ink.svg)](https://github.com/Rafostar/gjs-ink/blob/master/COPYING)
+# ink
+[![License](https://img.shields.io/github/license/Rafostar/ink.svg)](https://github.com/Rafostar/ink/blob/master/COPYING)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TFVDFD88KQ322)
 [![Donate](https://img.shields.io/badge/Donate-PayPal.Me-lightgrey.svg)](https://www.paypal.me/Rafostar)
-[![Twitter](https://img.shields.io/twitter/url/https/github.com/Rafostar/gjs-ink.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FRafostar%2Fgjs-ink)
+[![Twitter](https://img.shields.io/twitter/url/https/github.com/Rafostar/ink.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FRafostar%2Fink)
 
 Terminal text color printing and styling for GJS.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/promo.png">
+<img src="https://raw.githubusercontent.com/Rafostar/ink/media/images/promo.png">
 </p>
 
 <br>Print text and images in terminal with <b>Ink</b> using up to <b>16 million</b> colors palette!
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/truecolor.png">
-<img src="https://raw.githubusercontent.com/Rafostar/gjs-ink/media/images/mario.png">
+<img src="https://raw.githubusercontent.com/Rafostar/ink/media/images/truecolor.png">
+<img src="https://raw.githubusercontent.com/Rafostar/ink/media/images/mario.png">
 </p>
 
 ## Installation
 Just download this repository contents to `/usr/share/gjs-1.0/ink` folder.
 ```
-git clone https://github.com/Rafostar/gjs-ink.git /usr/share/gjs-1.0/ink
+git clone https://github.com/Rafostar/ink.git /usr/share/gjs-1.0/ink
 ```
 Alternatively download it to `ink` folder in any other location and export that location path with `GJS_PATH` environment variable.
 
 ## Manual
-Instructions how to use with full list of available options and functions can be found in [wiki](https://github.com/Rafostar/gjs-ink/wiki).
+Instructions how to use with full list of available options and functions can be found in [wiki](https://github.com/Rafostar/ink/wiki).
 
 ## Examples
-Here are some usage examples for each included module. More can be found inside [examples folder](https://github.com/Rafostar/gjs-ink/tree/master/examples) in this repository.
+Here are some usage examples for each included module. More can be found inside [examples folder](https://github.com/Rafostar/ink/tree/master/examples) in this repository.
 
-### [Ink.Printer](https://github.com/Rafostar/gjs-ink/wiki/Ink-Classes#inkprinter)
-#### [basic.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/basic.js)
+### [Ink.Printer](https://github.com/Rafostar/ink/wiki/Ink-Classes#inkprinter)
+#### [basic.js](https://raw.githubusercontent.com/Rafostar/ink/master/examples/basic.js)
 ```shell
 gjs ./examples/basic.js
 ```
@@ -47,7 +47,7 @@ let printer = new Ink.Printer({
 printer.print('Hello World');
 ```
 
-#### [advanced.js](https://raw.githubusercontent.com/Rafostar/gjs-ink/master/examples/advanced.js)
+#### [advanced.js](https://raw.githubusercontent.com/Rafostar/ink/master/examples/advanced.js)
 ```shell
 gjs ./examples/advanced.js
 ```
@@ -110,7 +110,7 @@ print(
 );
 ```
 
-### [Photo.Scanner](https://github.com/Rafostar/gjs-ink/wiki/Photo-Classes#photoscanner)
+### [Photo.Scanner](https://github.com/Rafostar/ink/wiki/Photo-Classes#photoscanner)
 ```shell
 gjs ./examples/mario.js
 ```
