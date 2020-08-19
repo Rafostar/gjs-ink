@@ -1,12 +1,14 @@
 {
   "name": "ink",
   "files": [
-    "Ink.js"
+    "Ink.js",
+    "Photo.js"
   ],
   "examples": {
     "basic": "examples/basic.js",
     "advanced": "examples/advanced.js",
     "test": "examples/test.js",
-    "truecolor": "examples/truecolor.js"
+    "truecolor": "examples/truecolor.js",
+    "sonic_http": "examples/sonic_http.js"
   }
 }
