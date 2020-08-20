@@ -32,37 +32,7 @@ var Scanner = class
         return this._scanSync(source, type, cancellable);
     }
 
-    scanStreamAsync(source, cancellable, cb)
-    {
-        cb = (typeof cancellable === 'function')
-            ? cancellable
-            : (cb)
-            ? cb
-            : noop;
-
-        cancellable = (!cancellable || typeof cancellable === 'function')
-            ? null : cancellable;
-
-        GdkPixbuf.Pixbuf.new_from_stream_at_scale_async(
-            source,
-            this.size_x,
-            this.size_y,
-            this.keep_aspect,
-            cancellable,
-            (stream, task) => this._onStreamLoaded(task, cb)
-        );
-    }
-
-    scanStreamPromise(stream, cancellable)
-    {
-        return new Promise((resolve, reject) => {
-            this.scanStreamAsync(stream, cancellable, (err, image) => {
-                (err) ? reject(err) : resolve(image);
-            });
-        });
-    }
-
-    parsePixbuf(pixbuf)
+    scanPixbuf(pixbuf)
     {
         if(!pixbuf)
             return null;
@@ -90,6 +60,36 @@ var Scanner = class
         return pixelsArray;
     }
 
+    scanStreamAsync(stream, cancellable, cb)
+    {
+        cb = (typeof cancellable === 'function')
+            ? cancellable
+            : (cb)
+            ? cb
+            : noop;
+
+        cancellable = (!cancellable || typeof cancellable === 'function')
+            ? null : cancellable;
+
+        GdkPixbuf.Pixbuf.new_from_stream_at_scale_async(
+            stream,
+            this.size_x,
+            this.size_y,
+            this.keep_aspect,
+            cancellable,
+            (self, task) => this._onStreamLoaded(task, cb)
+        );
+    }
+
+    scanStreamPromise(stream, cancellable)
+    {
+        return new Promise((resolve, reject) => {
+            this.scanStreamAsync(stream, cancellable, (err, image) => {
+                (err) ? reject(err) : resolve(image);
+            });
+        });
+    }
+
     _scanSync(source, type, cancellable)
     {
         let args = [
@@ -107,7 +107,7 @@ var Scanner = class
         let pixbuf = GdkPixbuf.Pixbuf[
             `new_from_${type}_at_scale`].apply(this, args);
 
-        return this.parsePixbuf(pixbuf);
+        return this.scanPixbuf(pixbuf);
     }
 
     _onStreamLoaded(task, cb)
@@ -120,7 +120,7 @@ var Scanner = class
         if(!pixbuf)
             return cb(new Error('could not create pixbuf from stream'));
 
-        let parsed = this.parsePixbuf(pixbuf);
+        let parsed = this.scanPixbuf(pixbuf);
 
         if(!parsed)
             return cb(new Error('could not parse pixbuf'));
